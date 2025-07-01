@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Surya's Project</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e0f2f1, #ffffff);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    header {
+      background: linear-gradient(135deg, #004d40, #00796b);
+      color: white;
+      padding: 15px 10px; /* Reduced height */
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 24px;
+      margin: 5px 0;
+    }
+
+    header p {
+      font-size: 14px;
+      margin: 0 0 10px 0;
+    }
+
+    nav a {
+      margin: 0 15px;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #b2dfdb;
+    }
+
+    section {
+      background-color: #ffffff;
+      margin: 30px 20px;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+      flex: 1;
+    }
+
+    h1, h2, h3 {
+      color: #004d40;
+    }
+
+    input, button, select {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    input, select {
+      background-color: #f9f9f9;
+    }
+
+    button {
+      background-color: #00796b;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #004d40;
+    }
+
+    .task, .product {
+      background: #e0f2f1;
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .product {
+      border: 1px solid #80cbc4;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background-color: #004d40;
+      color: white;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Surya's Portfolio</h1>
+  <p>B.Tech Student | Web Developer</p>
+  <nav>
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section id="about">
+  <h2>About Me</h2>
+  <p>I am a B.Tech student passionate about front-end development using HTML, CSS, and JavaScript.</p>
+</section>
+
+<section id="projects">
+  <h2>Projects</h2>
+
+  <h3>1. To-Do List with Local Storage</h3>
+  <input type="text" id="taskInput" placeholder="Enter a task"/>
+  <button onclick="addTask()">Add Task</button>
+  <ul id="taskList"></ul>
+
+  <h3>2. Product Listing Page</h3>
+  <label>Filter:</label>
+  <select id="filter" onchange="filterProducts()">
+    <option value="all">All</option>
+    <option value="mobile">Mobile</option>
+    <option value="laptop">Laptop</option>
+  </select>
+
+  <label>Sort:</label>
+  <select id="sort" onchange="sortProducts()">
+    <option value="default">Sort</option>
+    <option value="price">Price</option>
+    <option value="rating">Rating</option>
+  </select>
+
+  <div id="productList"></div>
+</section>
+
+<section id="contact">
+  <h2>Contact Me</h2>
+  <p>Email: surya@gmail.com</p>
+</section>
+
+<footer>
+  &copy; 2025 Surya | All rights reserved.
+</footer>
+
+<script>
+  const taskList = document.getElementById("taskList");
+  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+  function renderTasks() {
+    taskList.innerHTML = '';
+    tasks.forEach((task, index) => {
+      const li = document.createElement("li");
+      li.className = "task";
+      li.textContent = task;
+      li.onclick = () => removeTask(index);
+      taskList.appendChild(li);
+    });
+  }
+
+  function addTask() {
+    const task = document.getElementById("taskInput").value;
+    if (task.trim()) {
+      tasks.push(task);
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+      renderTasks();
+      document.getElementById("taskInput").value = "";
+    }
+  }
+
+  function removeTask(index) {
+    tasks.splice(index, 1);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    renderTasks();
+  }
+
+  renderTasks();
+
+  const products = [
+    { name: "iPhone", category: "mobile", price: 79999, rating: 4.5 },
+    { name: "Samsung Galaxy", category: "mobile", price: 65999, rating: 4.3 },
+    { name: "MacBook Pro", category: "laptop", price: 199999, rating: 4.8 },
+    { name: "Dell XPS", category: "laptop", price: 149999, rating: 4.6 }
+  ];
+
+  function displayProducts(list) {
+    const productList = document.getElementById("productList");
+    productList.innerHTML = '';
+    list.forEach(product => {
+      const div = document.createElement("div");
+      div.className = "product";
+      div.innerHTML = `<strong>${product.name}</strong><br>Price: ₹${product.price} | Rating: ${product.rating}`;
+      productList.appendChild(div);
+    });
+  }
+
+  function filterProducts() {
+    const category = document.getElementById("filter").value;
+    const filtered = category === "all" ? products : products.filter(p => p.category === category);
+    displayProducts(filtered);
+  }
+
+  function sortProducts() {
+    const sort = document.getElementById("sort").value;
+    let sorted = [...products];
+    if (sort === "price") sorted.sort((a, b) => a.price - b.price);
+    else if (sort === "rating") sorted.sort((a, b) => b.rating - a.rating);
+    displayProducts(sorted);
+  }
+
+  displayProducts(products);
+</script>
+
+</body>
+</html>
